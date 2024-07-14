@@ -1,3 +1,4 @@
+use bytes::BytesMut;
 use crate::key_value::KeyValue;
 use crate::memory::options::LogOptions;
 use crate::memory::segment::Segment;
@@ -17,6 +18,13 @@ impl Log {
 
     pub(crate) fn try_append(&mut self, key_value: KeyValue) -> bool {
         let encoded = key_value.encode();
+        if self.try_append_to_segment(&encoded) {
+            return true;
+        }
+        return false;
+    }
+
+    fn try_append_to_segment(&mut self, encoded: &BytesMut) -> bool {
         if self.segments[self.segment_tail].try_append(&encoded) {
             return true;
         }
@@ -24,7 +32,7 @@ impl Log {
             return false;
         }
         self.segment_tail += 1;
-        return self.segments[self.segment_tail].try_append(&encoded)
+        return self.segments[self.segment_tail].try_append(&encoded);
     }
 }
 
