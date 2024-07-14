@@ -27,11 +27,52 @@ impl Segment {
 
         return &self.buffer[index..index + size];
     }
+
+    fn is_empty(&self) -> bool {
+        self.available_capacity == self.buffer.capacity()
+    }
+
+    fn is_full(&self) -> bool {
+        self.available_capacity <= 0
+    }
 }
 
 #[cfg(test)]
 mod tests {
     use crate::memory::segment::Segment;
+
+    #[test]
+    fn is_empty() {
+        let segment = Segment::new(16);
+        assert_eq!(true, segment.is_empty());
+    }
+
+    #[test]
+    fn is_not_empty() {
+        let mut segment = Segment::new(32);
+        let data = b"thread-per-core-1";
+
+        assert_eq!(true, segment.try_append(data));
+        assert_eq!(false, segment.is_empty());
+    }
+
+    #[test]
+    fn is_full() {
+        let mut segment = Segment::new(16);
+        let data = b"thread-per-core1";
+
+        assert_eq!(true, segment.try_append(data));
+        assert_eq!(true, segment.is_full());
+    }
+
+    #[test]
+    fn is_not_full() {
+        let mut segment = Segment::new(32);
+        let data = b"thread-per-core-1";
+
+        assert_eq!(true, segment.try_append(data));
+        assert_eq!(false, segment.is_full());
+    }
 
     #[test]
     fn should_append_to_segment() {
