@@ -1,4 +1,4 @@
-mod memory;
+pub(crate) mod memory;
 pub mod key_value;
 
 fn main() {
