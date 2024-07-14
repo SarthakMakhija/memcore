@@ -4,7 +4,7 @@ pub(crate) struct LogOptions {
 }
 
 impl LogOptions {
-    pub(crate) fn new(log_size_bytes: usize, segment_size_bytes: usize) -> LogOptions {
+    pub(crate) fn new(log_size_bytes: usize, segment_size_bytes: usize) -> Self {
         assert!(log_size_bytes >= segment_size_bytes);
         LogOptions {
             log_size_bytes,
@@ -17,6 +17,10 @@ impl LogOptions {
             return (self.log_size_bytes / self.segment_size_bytes) + 1;
         }
         return self.log_size_bytes / self.segment_size_bytes;
+    }
+
+    pub(crate) fn segment_size(&self) -> usize {
+        self.segment_size_bytes
     }
 }
 

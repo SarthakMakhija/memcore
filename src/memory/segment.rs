@@ -4,7 +4,7 @@ pub(crate) struct Segment {
 }
 
 impl Segment {
-    pub(crate) fn new(capacity: usize) -> Segment {
+    pub(crate) fn new(capacity: usize) -> Self {
         assert!(capacity > 0);
         Segment {
             buffer: Vec::with_capacity(capacity),

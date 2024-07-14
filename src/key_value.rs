@@ -8,7 +8,7 @@ pub(crate) struct KeyValue {
 }
 
 impl KeyValue {
-    pub fn new(key: Vec<u8>, value: Vec<u8>) -> KeyValue {
+    pub fn new(key: Vec<u8>, value: Vec<u8>) -> Self {
         assert!(key.len() > 0);
         assert!(value.len() > 0);
         KeyValue { key, value }
