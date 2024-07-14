@@ -1,21 +1,16 @@
-use std::collections::HashMap;
 use std::io::Error;
+
 use bytes::BytesMut;
 
 use crate::key_value::KeyValue;
+use crate::memory::index::{Index, IndexMarker};
 use crate::memory::options::LogOptions;
 use crate::memory::segment::Segment;
 
 pub(crate) struct Log {
     segments: Vec<Segment>,
-    index: HashMap<Vec<u8>, IndexMarker>,
+    index: Index,
     segment_tail: usize,
-}
-
-pub(crate) struct IndexMarker {
-    segment_index: usize,
-    segment_position: usize,
-    key_value_size: usize,
 }
 
 impl Log {
@@ -23,7 +18,7 @@ impl Log {
         Log {
             segments: (1..=options.number_of_segments()).map(|_| Segment::new(options.segment_size())).collect(),
             segment_tail: 0,
-            index: HashMap::new(),
+            index: Index::new(),
         }
     }
 
@@ -31,11 +26,10 @@ impl Log {
         let encoded = key_value.encode();
         let appended = self.try_append_to_segment(&encoded);
         if let Some(segment_position) = appended {
-            self.index.insert(key_value.key(), IndexMarker {
-                segment_index: self.segment_tail,
-                segment_position,
-                key_value_size: encoded.len(),
-            });
+            self.index.insert(
+                key_value.key(),
+                IndexMarker::new(self.segment_tail, segment_position, encoded.iter().len()),
+            );
             return true;
         }
         return false;
