@@ -25,14 +25,14 @@ impl Log {
     }
 
     fn try_append_to_segment(&mut self, encoded: &BytesMut) -> bool {
-        if self.segments[self.segment_tail].try_append(&encoded) {
+        if self.segments[self.segment_tail].try_append(&encoded).1 {
             return true;
         }
         if self.segment_tail == self.segments.len() - 1 {
             return false;
         }
         self.segment_tail += 1;
-        return self.segments[self.segment_tail].try_append(&encoded);
+        return self.segments[self.segment_tail].try_append(&encoded).1;
     }
 }
 
