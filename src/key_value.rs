@@ -1,9 +1,6 @@
 use std::io::{Error, Read};
-use std::mem;
 
 use bytes::{Buf, BufMut, BytesMut};
-
-const U16_SIZE: usize = mem::size_of::<u16>();
 
 pub(crate) struct KeyValue {
     key: Vec<u8>,
@@ -14,7 +11,7 @@ impl KeyValue {
     pub fn new(key: Vec<u8>, value: Vec<u8>) -> KeyValue {
         assert!(key.len() > 0);
         assert!(value.len() > 0);
-        KeyValue {key, value}
+        KeyValue { key, value }
     }
 
     pub(crate) fn encode(&self) -> BytesMut {
@@ -23,7 +20,7 @@ impl KeyValue {
         buffer.put_u16_le(self.value.len() as u16);
         buffer.put_slice(&self.key);
         buffer.put_slice(&self.value);
-        return buffer
+        return buffer;
     }
 
     pub(crate) fn decode_from(mut buffer: BytesMut) -> Result<KeyValue, Error> {
@@ -40,7 +37,7 @@ impl KeyValue {
         value.resize(value_length as usize, 0);
         buffer_reader.read_exact(&mut value)?;
 
-        return Ok(KeyValue::new(key, value))
+        return Ok(KeyValue::new(key, value));
     }
 }
 
