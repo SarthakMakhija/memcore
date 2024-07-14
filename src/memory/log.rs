@@ -2,7 +2,7 @@ use std::io::Error;
 
 use bytes::BytesMut;
 
-use crate::key_value::KeyValue;
+use crate::memory::key_value::KeyValue;
 use crate::memory::index::{Index, IndexMarker};
 use crate::memory::options::LogOptions;
 use crate::memory::segment::Segment;
@@ -60,7 +60,7 @@ impl Log {
 
 #[cfg(test)]
 mod tests {
-    use crate::key_value::KeyValue;
+    use crate::memory::key_value::KeyValue;
     use crate::memory::log::Log;
     use crate::memory::options::LogOptions;
 

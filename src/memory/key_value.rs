@@ -8,7 +8,7 @@ pub(crate) struct KeyValue {
 }
 
 impl KeyValue {
-    pub fn new(key: Vec<u8>, value: Vec<u8>) -> Self {
+    pub(crate) fn new(key: Vec<u8>, value: Vec<u8>) -> Self {
         assert!(key.len() > 0);
         assert!(value.len() > 0);
         KeyValue { key, value }
@@ -51,7 +51,7 @@ impl KeyValue {
 
 #[cfg(test)]
 mod tests {
-    use crate::key_value::KeyValue;
+    use crate::memory::key_value::KeyValue;
 
     #[test]
     fn encodes_and_decodes_key_value() {
