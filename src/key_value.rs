@@ -39,6 +39,14 @@ impl KeyValue {
 
         return Ok(KeyValue::new(key, value));
     }
+
+    pub(crate) fn key(&self) -> Vec<u8> {
+        return self.key.clone()
+    }
+
+    pub(crate) fn value(&self) -> &[u8] {
+        return &self.value
+    }
 }
 
 #[cfg(test)]

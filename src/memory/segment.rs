@@ -12,14 +12,14 @@ impl Segment {
         }
     }
 
-    pub(crate) fn try_append(&mut self, slice: &[u8]) -> (usize, bool) {
+    pub(crate) fn try_append(&mut self, slice: &[u8]) -> Option<usize> {
         if self.available_capacity >= slice.len() {
             let index = self.buffer.len();
             self.buffer.extend_from_slice(slice);
             self.available_capacity -= slice.len();
-            return (index, true);
+            return Some(index);
         }
-        return (0, false);
+        return None;
     }
 
     pub(crate) fn get(&self, index: usize, size: usize) -> &[u8] {
@@ -53,7 +53,7 @@ mod tests {
         let mut segment = Segment::new(32);
         let data = b"thread-per-core-1";
 
-        assert_eq!(true, segment.try_append(data).1);
+        assert_eq!(true, segment.try_append(data).is_some());
         assert_eq!(false, segment.is_empty());
     }
 
@@ -62,7 +62,7 @@ mod tests {
         let mut segment = Segment::new(16);
         let data = b"thread-per-core1";
 
-        assert_eq!(true, segment.try_append(data).1);
+        assert_eq!(true, segment.try_append(data).is_some());
         assert_eq!(true, segment.is_full());
     }
 
@@ -71,7 +71,7 @@ mod tests {
         let mut segment = Segment::new(32);
         let data = b"thread-per-core-1";
 
-        assert_eq!(true, segment.try_append(data).1);
+        assert_eq!(true, segment.try_append(data).is_some());
         assert_eq!(false, segment.is_full());
     }
 
@@ -80,7 +80,7 @@ mod tests {
         let mut segment = Segment::new(16);
         let data = b"thread-per-core";
 
-        assert_eq!(true, segment.try_append(data).1);
+        assert_eq!(true, segment.try_append(data).is_some());
     }
 
     #[test]
@@ -88,14 +88,14 @@ mod tests {
         let mut segment = Segment::new(32);
         let data = b"thread-per-core-1";
 
-        let (append_index, ok) = segment.try_append(data);
-        assert_eq!(0, append_index);
-        assert_eq!(true, ok);
+        let appended = segment.try_append(data);
+        assert_eq!(true, appended.is_some());
+        assert_eq!(0, appended.unwrap());
 
         let data = b"thread-per-core";
-        let (append_index, ok) = segment.try_append(data);
-        assert_eq!(17, append_index);
-        assert_eq!(true, ok);
+        let appended = segment.try_append(data);
+        assert_eq!(true, appended.is_some());
+        assert_eq!(17, appended.unwrap());
     }
 
     #[test]
@@ -103,8 +103,8 @@ mod tests {
         let mut segment = Segment::new(16);
         let data = b"thread-per-core";
 
-        assert_eq!(true, segment.try_append(data).1);
-        assert_eq!(false, segment.try_append(data).1);
+        assert_eq!(true, segment.try_append(data).is_some());
+        assert_eq!(false, segment.try_append(data).is_some());
     }
 
     #[test]
@@ -112,7 +112,7 @@ mod tests {
         let mut segment = Segment::new(16);
         let data = b"thread-per-core";
 
-        assert_eq!(true, segment.try_append(data).1);
+        assert_eq!(true, segment.try_append(data).is_some());
 
         let retrieved = segment.get(0, data.len());
         assert_eq!(data, retrieved);
@@ -123,7 +123,7 @@ mod tests {
         let mut segment = Segment::new(16);
         let data = b"memcore";
 
-        assert_eq!(true, segment.try_append(data).1);
+        assert_eq!(true, segment.try_append(data).is_some());
 
         let retrieved = segment.get(0, 7);
         assert_eq!(data, retrieved);
@@ -134,7 +134,7 @@ mod tests {
         let mut segment = Segment::new(16);
         let data = b"memcore";
 
-        assert_eq!(true, segment.try_append(data).1);
+        assert_eq!(true, segment.try_append(data).is_some());
 
         let retrieved = segment.get(0, 3);
         assert_eq!(b"mem", retrieved);
@@ -146,7 +146,7 @@ mod tests {
         let mut segment = Segment::new(16);
         let data = b"memcore";
 
-        assert_eq!(true, segment.try_append(data).1);
+        assert_eq!(true, segment.try_append(data).is_some());
 
         let _ = segment.get(0, 9);
     }
