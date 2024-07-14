@@ -1,6 +1,8 @@
+use std::hash::{Hash, Hasher};
 use std::io::{Error, Read};
 
 use bytes::{Buf, BufMut, BytesMut};
+use fasthash::{FastHasher, MurmurHasher};
 
 pub(crate) struct KeyValue {
     key: Vec<u8>,
@@ -40,6 +42,12 @@ impl KeyValue {
         return Ok(KeyValue::new(key, value));
     }
 
+    pub(crate) fn hash_of(&self) -> u64 {
+        let mut hasher: MurmurHasher = MurmurHasher::new();
+        self.key.hash(&mut hasher);
+        hasher.finish()
+    }
+
     pub(crate) fn key(&self) -> Vec<u8> {
         return self.key.clone()
     }
@@ -61,5 +69,11 @@ mod tests {
         let decoded = KeyValue::decode_from(encoded).expect("Failed to decode the key_value");
         assert_eq!(b"raft", &decoded.key[..]);
         assert_eq!(b"consensus", &decoded.value[..]);
+    }
+
+    #[test]
+    fn get_the_hash_of_the_key() {
+        let key_value = KeyValue::new(Vec::from(b"raft"), Vec::from(b"consensus"));
+        assert!(key_value.hash_of() > 0);
     }
 }
