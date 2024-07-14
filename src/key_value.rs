@@ -40,9 +40,6 @@ impl KeyValue {
         value.resize(value_length as usize, 0);
         buffer_reader.read_exact(&mut value)?;
 
-        println!("Key {:?}", key);
-        println!("Value {:?}", value);
-
         return Ok(KeyValue::new(key, value))
     }
 }
