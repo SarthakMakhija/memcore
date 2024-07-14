@@ -1,4 +1,4 @@
-# memcore
+# Memcore
 [![build](https://github.com/SarthakMakhija/memcore/actions/workflows/build.yml/badge.svg)](https://github.com/SarthakMakhija/memcore/actions/workflows/build.yml)
 
 Thread-per-core implementation of in-memory kv. This repository is to learn thread-per-core concept with application
