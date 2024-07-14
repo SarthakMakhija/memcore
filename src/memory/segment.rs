@@ -1,10 +1,10 @@
-struct Segment {
+pub(crate) struct Segment {
     buffer: Vec<u8>,
     available_capacity: usize,
 }
 
 impl Segment {
-    fn new(capacity: usize) -> Segment {
+    pub(crate) fn new(capacity: usize) -> Segment {
         assert!(capacity > 0);
         Segment {
             buffer: Vec::with_capacity(capacity),
@@ -12,7 +12,7 @@ impl Segment {
         }
     }
 
-    fn try_append(&mut self, slice: &[u8]) -> bool {
+    pub(crate) fn try_append(&mut self, slice: &[u8]) -> bool {
         if self.available_capacity >= slice.len() {
             self.buffer.extend_from_slice(slice);
             self.available_capacity -= slice.len();
@@ -21,18 +21,18 @@ impl Segment {
         return false;
     }
 
-    fn get(&self, index: usize, size: usize) -> &[u8] {
+    pub(crate) fn get(&self, index: usize, size: usize) -> &[u8] {
         assert!(size > 0);
         assert!(self.buffer.len() >= (index + size - 1));
 
         return &self.buffer[index..index + size];
     }
 
-    fn is_empty(&self) -> bool {
+    pub(crate) fn is_empty(&self) -> bool {
         self.available_capacity == self.buffer.capacity()
     }
 
-    fn is_full(&self) -> bool {
+    pub(crate) fn is_full(&self) -> bool {
         self.available_capacity <= 0
     }
 }
